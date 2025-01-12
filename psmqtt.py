@@ -111,7 +111,8 @@ def run() -> None:
         cf.get('mqtt_broker', 'localhost'),
         int(cf.get('mqtt_port', '1883')),
         cf.get('mqtt_username', ''),
-        cf.get('mqtt_password', None))
+        cf.get('mqtt_password', None),
+        cf.get('mqtt_cafile', None))
     #
     # parse schedule
     #

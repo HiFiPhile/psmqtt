@@ -52,7 +52,8 @@ class MqttClient:
             mqtt_broker:str,
             mqtt_port:int,
             username:str,
-            password:Optional[str]) -> bool:
+            password:Optional[str],
+            cafile:Optional[str]) -> bool:
         '''
         Connect to the MQTT broker
         '''
@@ -63,7 +64,7 @@ class MqttClient:
 
         if mqtt_port == 8883:
             assert paho.ssl
-            self.mqttc.tls_set(ca_certs=None, certfile=None, keyfile=None,
+            self.mqttc.tls_set(ca_certs=cafile, certfile=None, keyfile=None,
                 cert_reqs=paho.ssl.CERT_REQUIRED, tls_version=paho.ssl.PROTOCOL_TLS,
                 ciphers=None)
         logging.debug("Connecting to '%s:%d'", mqtt_broker, mqtt_port)
