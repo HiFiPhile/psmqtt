@@ -3,7 +3,6 @@ import fnmatch
 import json
 import logging
 import psutil  # pip install psutil
-from pySMART import Device as SmartDevice
 import re
 from typing import (
     Any,
@@ -505,52 +504,6 @@ class ProcessesCommandHandler(CommandHandler):
         return process_handler.handle(param, process)
 
 
-class SmartCommandHandler(CommandHandler):
-    '''
-    Handler of commands addressed to SMART
-    '''
-
-    def __init__(self) -> None:
-        '''
-
-        '''
-        super().__init__('smart')
-        return
-
-    def handle(self, params:str) -> Payload:
-        '''
-        Will call self.get_value()
-        '''
-        all_params = params
-        dev, params = split(params)
-        if dev == 'dev':
-            self.name, params = split(params)
-        else:
-            self.name = dev
-
-        self.name = f'/dev/{self.name}'
-        self.device = SmartDevice(self.name)
-        if self.device.serial is None:
-            errmsg = f"Use sudo to read '{self.name}' SMART data"
-            logging.error(errmsg)
-            raise Exception(errmsg)
-
-        info = self.device.__getstate__()
-        if params == '':
-            return string_from_dict_optionally(info, True)
-        elif params == '*':
-            return string_from_dict_optionally(info, False)
-        elif params == '*;':
-            return string_from_dict_optionally(info, True)
-        val = info.get(params, None)
-        if val is not None:
-            return val
-        raise Exception(f"Parameter '{all_params}' is not supported")
-
-    def get_value(self) -> Payload:
-        raise Exception("Not implemented")
-
-
 handlers = {
     'cpu_times': TupleCommandHandler('cpu_times'),
 
@@ -599,7 +552,6 @@ handlers = {
     'sensors_temperatures': SensorsTemperaturesCommandHandler(),
     'sensors_fans': SensorsFansCommandHandler(),
     'sensors_battery': TupleCommandHandler('sensors_battery'),
-    'smart': SmartCommandHandler(),
 }
 
 
